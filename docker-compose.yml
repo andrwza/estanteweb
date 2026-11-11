@@ -1,0 +1,35 @@
+services:
+  mysql:
+    image: mysql:8
+    container_name: estanteweb-mysql
+    restart: always 
+    environment:
+      MYSQL_DATABASE: estanteweb 
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s 
+      retries: 10
+
+  app:
+    build:
+      context: ./estanteweb 
+      dockerfile: Dockerfile
+    container_name: estanteweb-app
+    restart: always
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/estanteweb?allowPublicKeyRetrieval=true&useSSL=false
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    depends_on:
+      mysql:
+        condition: service_healthy
+volumes: 
+  mysql_data:
