@@ -1,14 +1,11 @@
-<#-- NOVO: arquivo inteiro. Tela de correção de um livro. -->
 <#include "cabecalho.ftlh">
 
 <h2>Corrigir Livro</h2>
 
-<#-- Mensagem de erro quando os dados são inválidos (mesmas regras do cadastro) -->
 <#if erro??>
     <p>${erro}</p>
 </#if>
 
-<#-- Formulário POST já preenchido com os dados atuais do livro (value="${livro....}") -->
 <form method="post" action="/livros/${livro.id?c}">
     <label for="titulo">Título:</label><br>
     <input type="text" id="titulo" name="titulo" value="${livro.titulo!}"><br><br>

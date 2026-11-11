@@ -87,17 +87,11 @@ public class LivroRepository {
         jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco());
     }
 
-    // NOVO: corrige um livro. O "WHERE id = ?" garante que só esse livro muda
-    // (sem o WHERE, todos os livros seriam alterados, como aconteceu com o estagiário).
-    // Usa parâmetros "?", então nenhum valor do usuário é concatenado no SQL.
-    // Retorna quantas linhas foram alteradas (0 = livro não existe).
     public int atualizar(Livro livro) {
         String sql = "UPDATE livro SET titulo = ?, autor = ?, ano = ?, preco = ? WHERE id = ?";
         return jdbcTemplate.update(sql, livro.getTitulo(), livro.getAutor(), livro.getAno(), livro.getPreco(), livro.getId());
     }
 
-    // NOVO: remove apenas o livro com esse id. Também usa parâmetro "?".
-    // Retorna quantas linhas foram apagadas (0 = livro não existe).
     public int remover(Long id) {
         String sql = "DELETE FROM livro WHERE id = ?";
         return jdbcTemplate.update(sql, id);

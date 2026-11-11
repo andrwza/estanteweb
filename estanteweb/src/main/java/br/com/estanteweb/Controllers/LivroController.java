@@ -36,7 +36,6 @@ public class LivroController {
 
     @GetMapping("/livros/{id}")
     public String exibirLivro(@PathVariable Long id, Model model) {
-        // ALTERADO: antes o "if (livro == null) throw ..." ficava aqui; agora usa o buscarOu404
         Livro livro = buscarOu404(id);
         model.addAttribute("livro", livro);
         model.addAttribute("outrosLivros", repositorio.listarDoMesmoAutor(livro.getAutor(), id));
@@ -62,8 +61,6 @@ public class LivroController {
         livro.setAno(ano);
         livro.setPreco(preco);
 
-        // ALTERADO: as regras de validação que ficavam aqui foram movidas para o método validar(),
-        // para que o cadastro e a correção usem exatamente as mesmas regras
         String erro = validar(livro);
         if (erro != null) {
             model.addAttribute("erro", erro);
@@ -79,8 +76,6 @@ public class LivroController {
         return "redirect:/livros/html";
     }
 
-    // NOVO: regras de validação do cadastro, agora reaproveitadas na correção.
-    // Retorna a mensagem de erro, ou null se o livro estiver válido.
     private String validar(Livro livro) {
         if (livro.getTitulo() == null || livro.getTitulo().isBlank()) {
             return "O título não pode estar em branco.";
@@ -94,8 +89,6 @@ public class LivroController {
         return null;
     }
 
-    // NOVO: busca o livro e, se não existir, responde 404 (Not Found) em vez de quebrar a aplicação.
-    // Usado na ficha, na correção e na remoção.
     private Livro buscarOu404(Long id) {
         Livro livro = repositorio.buscarPorId(id);
         if (livro == null) {
@@ -104,16 +97,12 @@ public class LivroController {
         return livro;
     }
 
-    // NOVO: abre a tela de correção já com os dados atuais do livro (GET só mostra, não grava nada)
     @GetMapping("/livros/{id}/editar")
     public String editarLivro(@PathVariable Long id, Model model) {
         model.addAttribute("livro", buscarOu404(id));
         return "livro-editar";
     }
 
-    // NOVO: grava a correção (POST). Se os dados forem inválidos, nada é gravado e a tela volta
-    // com a mensagem de erro e o que o usuário digitou. Depois de gravar, faz redirect para a ficha,
-    // assim atualizar a página (F5) não repete a alteração.
     @PostMapping("/livros/{id}")
     public String atualizarLivro(
             @PathVariable Long id,
@@ -144,15 +133,12 @@ public class LivroController {
         return "redirect:/livros/" + id;
     }
 
-    // NOVO: mostra a tela de confirmação com os dados do livro. É um GET, então não apaga nada.
     @GetMapping("/livros/{id}/remover")
     public String confirmarRemocao(@PathVariable Long id, Model model) {
         model.addAttribute("livro", buscarOu404(id));
         return "livro-remover";
     }
 
-    // NOVO: remove de fato o livro. Só aceita POST, então nenhum link comum consegue apagar dados.
-    // Depois redireciona para a listagem.
     @PostMapping("/livros/{id}/remover")
     public String removerLivro(@PathVariable Long id) {
         if (repositorio.remover(id) == 0) {

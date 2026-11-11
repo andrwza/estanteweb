@@ -7,8 +7,6 @@
 <p><strong>Ano:</strong> ${livro.ano}</p>
 <p><strong>Preço:</strong> R$ ${livro.preco?string["0.00"]}</p>
 
-<#-- NOVO: links da ficha para a tela de correção e para a tela de remoção.
-     Eles só abrem as telas; nenhum deles grava ou apaga nada. -->
 <p>
     <a href="/livros/${livro.id?c}/editar">Editar</a> |
     <a href="/livros/${livro.id?c}/remover">Remover</a>
